@@ -1,0 +1,7 @@
+image: cardcorp/r-java
+
+test:
+  script:
+    - R -e 'install.packages(c("testthat"))'
+    - R CMD build . --no-build-vignettes --no-manual
+    - R CMD check *tar.gz --no-build-vignettes --no-manual
