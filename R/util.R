@@ -111,7 +111,7 @@
 #' @return an Auto-WEKA classifier
 #' @examples
 #' \dontrun{
-#' buildAutoWekaClassifier("http://storm.cis.fordham.edu/~gweiss/data-mining/weka-data/iris.arff", timeLimit = 1, noCrossValidation = TRUE)
+#' buildAutoWekaClassifier("iris.arff", timeLimit = 1, noCrossValidation = TRUE)
 #' }
 #' @export
 buildAutoWekaClassifier <- function(trainingFile, testingFile, classIndex = "last", numberOfFolds = 10, noCrossValidation = FALSE,
