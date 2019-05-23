@@ -6,7 +6,7 @@ apt_packages:
   - openjdk-8-jdk
 
 before_install:
-  - sudo R CMD javareconf
+  - R CMD javareconf
 
 script:
   - make
