@@ -1,7 +1,5 @@
 language: r
 
-sudo: required
-
 apt_packages:
   - openjdk-8-jdk
 
