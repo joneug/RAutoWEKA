@@ -9,6 +9,7 @@ before_install:
   - sudo R CMD javareconf
 
 script:
+  - make
   - R -e 'install.packages(c("testthat"))'
   - R CMD build . --no-build-vignettes --no-manual
   - R CMD check *tar.gz --no-build-vignettes --no-manual
