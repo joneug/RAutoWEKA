@@ -1,4 +1,4 @@
-package de.wwu.is.stat.automl;
+package de.wwu.is.RAutoWEKA;
 
 import autoweka.ConfigurationCollection;
 import weka.attributeSelection.AttributeSelection;

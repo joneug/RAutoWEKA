@@ -64,7 +64,7 @@ buildAutoWekaClassifier <- function(data, seed = 123, timeLimit = 15, memoryLimi
   exitFunction <- startRedirectingJavaStdErrOutput()
 
   # Build AutoWEKAClassifier
-  autoWEKAClassifier <- rJava::.jnew("de.wwu.is.stat.automl.RAutoWEKAClassifier") # subclass of weka.classifiers.meta.AutoWEKAClassifier
+  autoWEKAClassifier <- rJava::.jnew("de/wwu/is/RAutoWEKA/RAutoWEKAClassifier") # subclass of weka/classifiers/meta/AutoWEKAClassifier
   rJava::.jcall(autoWEKAClassifier, "V", "setOptions", rJava::.jarray(runOptions))
   rJava::.jcall(autoWEKAClassifier, "V", "buildClassifier", wekaInstances)
 
