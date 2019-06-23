@@ -4,18 +4,30 @@
 \alias{buildAutoWekaClassifier}
 \alias{print.RAutoWEKAClassifier}
 \alias{summary.RAutoWEKAClassifier}
+\alias{predict.RAutoWEKAClassifier}
 \title{Build Auto-WEKA classifier}
 \usage{
-buildAutoWekaClassifier(data, seed = 123, timeLimit = 15,
-  memoryLimit = 1024, numberOfConfigs = 1, metric = "errorRate",
-  parallelRuns = 1, outputDebugInfo = FALSE,
+buildAutoWekaClassifier(formula, data, subset, na.action, seed = 123,
+  timeLimit = 15, memoryLimit = 1024, numberOfConfigs = 1,
+  metric = "errorRate", parallelRuns = 1, outputDebugInfo = FALSE,
   noCapabiltiesCheck = FALSE, decimalPlaces = 2, batchSize = 100)
 
 \method{print}{RAutoWEKAClassifier}(x, ...)
 
 \method{summary}{RAutoWEKAClassifier}(x, ...)
+
+\method{predict}{RAutoWEKAClassifier}(object, newdata, type = c("class",
+  "probability"), ...)
 }
 \arguments{
+\item{formula}{a model formua.}
+
+\item{data}{the data to build the classifier on.}
+
+\item{subset}{an optional vector specifying a subset of observations to be used when building the classifier (see \code{\link[stats]{model.frame}}).}
+
+\item{na.action}{a function that specifies how to deal with NAs (see \code{\link[stats]{model.frame}}).}
+
 \item{seed}{the seed for the random number generator (defaults to 123).
 
 Original parameter name: \code{-seed}.}
@@ -59,13 +71,16 @@ Original parameter name: \code{-num-decimal-places}.}
 Original parameter name: \code{-batch-size}.}
 }
 \value{
-an Auto-WEKA classifier
+an Auto-WEKA classifier.
 }
 \description{
 This functions builds an Auto-WEKA classifier.
 }
 \examples{
-\dontrun{
-buildAutoWekaClassifier(iris, timeLimit = 1)
+classifier = buildAutoWekaClassifier(Species ~ ., iris, timeLimit = 1)
+predict(classifier, iris[1:10,-5])
+
 }
+\seealso{
+\code{\link[RWeka]{make_Weka_classifier}}
 }

@@ -16,6 +16,7 @@ Description: An R interface to Auto-WEKA (Version 2.6.1).
    hyperparameters, going beyond previous methods that address these issues in isolation.
    Auto-WEKA does this using a fully automated approach, leveraging recent innovations in Bayesian optimization. 
    For more information on Auto-WEKA see <https://www.cs.ubc.ca/labs/beta/Projects/autoweka/>.
+   This implementation partially adopted concepts used in the RWeka package (see <https://cran.r-project.org/package=RWeka>).
 Depends: R (>= 2.6.0)
 Imports: rJava (>= 0.6-3)
 SystemRequirements: Java (>= 8)

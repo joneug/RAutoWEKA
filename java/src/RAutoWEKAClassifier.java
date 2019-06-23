@@ -5,6 +5,7 @@ import weka.attributeSelection.AttributeSelection;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.meta.AutoWEKAClassifier;
+import weka.core.Instances;
 
 import java.util.Arrays;
 
@@ -146,6 +147,69 @@ public class RAutoWEKAClassifier extends AutoWEKAClassifier {
      */
     public int getTotalTried() {
         return totalTried;
+    }
+
+    /**
+     * Calculates the class membership for the given test instances.
+     * <p>
+     * Adapted from RWeka (0.4-40)
+     * Authors: Kurt Hornik [aut, cre], Christian Buchta [ctb], Torsten Hothorn [ctb], Alexandros Karatzoglou [ctb], David Meyer [ctb], Achim Zeileis [ctb]
+     * Link: https://cran.r-project.org/package=RWeka
+     *
+     * @param instances The instances to be classified.
+     * @return The predicted classes.
+     * @throws Exception If the instances could not be classified successfully.
+     */
+    public double[] classifyInstances(Instances instances) throws Exception {
+        if (super.classifier == null) {
+            throw new Exception("Auto-WEKA has not been run yet to get a model!");
+        }
+
+        int errorCount = 0;
+        double[] prediction = new double[instances.numInstances()];
+
+        for (int i = 0; i < instances.numInstances(); i++) {
+            try {
+                prediction[i] = super.classifyInstance(instances.instance(i));
+            } catch (Exception exception) {
+                errorCount++;
+                prediction[i] = Double.NaN;
+            }
+        }
+
+        if (errorCount > 0) {
+            System.err.println(errorCount + " instances not classified");
+        }
+
+        return prediction;
+    }
+
+    /**
+     * Calculates the class membership probabilities for the given test instances.
+     * <p>
+     * Adapted from RWeka (0.4-40)
+     * Authors: Kurt Hornik [aut, cre], Christian Buchta [ctb], Torsten Hothorn [ctb], Alexandros Karatzoglou [ctb], David Meyer [ctb], Achim Zeileis [ctb]
+     * Link: https://cran.r-project.org/package=RWeka
+     *
+     * @param i The instances to be classified.
+     * @return The predicted class probability distributions.
+     * @throws Exception If the instances could not be classified successfully.
+     */
+    public double[] distributionForInstances(Instances instances) throws Exception {
+        if (super.classifier == null) {
+            throw new Exception("Auto-WEKA has not been run yet to get a model!");
+        }
+
+        int k = 0;
+        double[] prediction = new double[instances.numInstances() * instances.numClasses()];
+
+        for (int i = 0; i < instances.numInstances(); i++) {
+            double[] tmp = super.distributionForInstance(instances.instance(i));
+            for (int j = 0; j < instances.numClasses(); j++, k++) {
+                prediction[k] = tmp[j];
+            }
+        }
+        return prediction;
     }
 
 }

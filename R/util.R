@@ -1,3 +1,8 @@
+#' Starts redirecting Java Standard Error Output to an dedicated \code{OutputStream}.
+#'
+#' @return a callback function to stop redirecting.
+#'
+#' @noRd
 startRedirectingJavaStdErrOutput <- function() {
   # Redirect Java Standard Error Output
   err <- rJava::.jfield("java/lang/System", name = "err")
@@ -6,7 +11,7 @@ startRedirectingJavaStdErrOutput <- function() {
 
   # To be called by the caller of this function to stop redirecting Java Standard Output
   stopRedirectFunction <- function(print) {
-    ## Stop redirecting Java Standard Error Output
+    # Stop redirecting Java Standard Error Output
     rJava::.jcall("java/lang/System", "V", "setErr", err)
     if(print)
       message(rJava::.jcall(errBos, "Ljava/lang/String;", "toString"), appendLF = FALSE)
@@ -15,7 +20,13 @@ startRedirectingJavaStdErrOutput <- function() {
   return(stopRedirectFunction)
 }
 
-stopRedirectingJavaStdErrOut <- function(exitFunction, print) {
+#' Stops redirecting Java Standard Error Output and optionally prints the errors that occured during redirection.
+#'
+#' @param exitFunction the callback function to stop redirecting.
+#' @param print logical indicating to print errors that occured during redirection (defaults to \code{FALSE}).
+#'
+#' @noRd
+stopRedirectingJavaStdErrOut <- function(exitFunction, print = FALSE) {
   stopifnot(is.function(exitFunction))
   stopifnot(is.logical(print))
 
