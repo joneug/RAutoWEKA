@@ -1,4 +1,4 @@
-#' Build Auto-WEKA classifier
+#' Auto-WEKA Classifier
 #'
 #' This functions builds an Auto-WEKA classifier.
 #'
@@ -24,7 +24,7 @@
 #' Original parameter name: \code{-nBestConfigs}.
 #' @param metric the metric to optimise (defaults to \code{errorRate}). Available metrics:
 #'
-#' areaAboveROC, areaUnderROC, avgCost, correct, correlationCoefficient, errorRate, falseNegativeRate, falsePositiveRate, fMeasure, incorrect, kappa, kBInformation, kBMeanInformation, kBRelativeInformation, meanAbsoluteError, pctCorrect, pctIncorrect, precision, relativeAbsoluteError, rootMeanSquaredError, rootRelativeSquaredError, weightedAreaUnderROC, weightedFalseNegativeRate, weightedFalsePositiveRate, weightedFMeasure, weightedPrecision, weightedRecall, weightedTrueNegativeRate, weightedTruePositiveRate
+#' \code{areaAboveROC}, \code{areaUnderROC}, \code{avgCost}, \code{correct}, \code{correlationCoefficient}, \code{errorRate}, \code{falseNegativeRate}, \code{falsePositiveRate}, \code{fMeasure}, \code{incorrect}, \code{kappa}, \code{kBInformation}, \code{kBMeanInformation}, \code{kBRelativeInformation}, \code{meanAbsoluteError}, \code{pctCorrect}, \code{pctIncorrect}, \code{precision}, \code{relativeAbsoluteError}, \code{rootMeanSquaredError}, \code{rootRelativeSquaredError}, \code{weightedAreaUnderROC}, \code{weightedFalseNegativeRate}, \code{weightedFalsePositiveRate}, \code{weightedFMeasure}, \code{weightedPrecision}, \code{weightedRecall}, \code{weightedTrueNegativeRate}, \code{weightedTruePositiveRate}.
 #'
 #' Original parameter name: \code{-metric}.
 #' @param parallelRuns the number of parallel runs (defaults to 1). Caution: this option is experimental.
@@ -43,18 +43,48 @@
 #'
 #' Original parameter name: \code{-batch-size}.
 #'
-#' @return an Auto-WEKA classifier.
+#' @return The Auto-WEKA classifier built.
 #'
-#' @seealso \code{\link[RWeka]{make_Weka_classifier}}
+#' @author Implementation partially based on \code{\link[RWeka]{make_Weka_classifier}}.
+#'
+#' @references
+#' C. Thornton, F. Hutter, H. H. Hoos, and K. Leyton-Brown (2013). Auto-WEKA: Combined selection and hyperparameter optimization of classification algorithms. In \emph{Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining} (pp. 847-855). ACM.
+#'
+#' F. Hutter, L. Kotthoff, and J. Vanschoren (2019). Automatic Machine Learning: Methods, Systems, Challenges.
+#'
+#' K. Hornik, C. Buchta, and A. Zeileis (2009). Open-source machine learning: R meets Weka. \emph{Computational Statistics}, \bold{24}/2, 225--232.
 #'
 #' @examples
-#' classifier = buildAutoWekaClassifier(Species ~ ., iris, timeLimit = 1)
+#' \dontrun{
+#' ## Iris Example
+#' data(iris)
+#' # Build classifier with time limit of 5 minutes
+#' classifier <- autoWekaClassifier(Species ~ ., iris, timeLimit = 5)
+#' # Get summary
+#' summary(classifier)
+#' # Predict class memberships
 #' predict(classifier, iris[1:10,-5])
+#' # Predict class membership probabilities
+#' predict(classifier, iris[1:10,-5], type = "probability")
 #'
+#' ## mlbench Exmaple
+#' require("mlbench")
+#' data("HouseVotes84", package = "mlbench")
+#' # Build classifier with changed metric
+#' classifier <- autoWekaClassifier(Class ~ ., HouseVotes84, metric = "precision")
+#' predict(model, HouseVotes84[1:10, -1])
+#' predict(model, HouseVotes84[1:10, -1], type = "probability")
+#' }
 #' @export
-buildAutoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, timeLimit = 15, memoryLimit = 1024, numberOfConfigs = 1, metric = "errorRate",
+autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, timeLimit = 15, memoryLimit = 1024, numberOfConfigs = 1,
+                               metric = c("errorRate", "areaAboveROC", "areaUnderROC", "avgCost", "correct", "correlationCoefficient",
+                                          "falseNegativeRate", "falsePositiveRate", "fMeasure", "incorrect", "kappa", "kBInformation",
+                                          "kBMeanInformation", "kBRelativeInformation", "meanAbsoluteError", "pctCorrect", "pctIncorrect",
+                                          "precision", "relativeAbsoluteError", "rootMeanSquaredError", "rootRelativeSquaredError",
+                                          "weightedAreaUnderROC", "weightedFalseNegativeRate", "weightedFalsePositiveRate", "weightedFMeasure",
+                                          "weightedPrecision", "weightedRecall", "weightedTrueNegativeRate", "weightedTruePositiveRate"),
                                     parallelRuns = 1, outputDebugInfo = FALSE, noCapabiltiesCheck = FALSE, decimalPlaces = 2, batchSize = 100) {
-  # Create model frame from call (adapted from RWeka::make_Weka_classifier and stats:lm)
+  # Create model frame from call (see e.g. stats:lm)
   cl <- match.call()
   mf <- match.call(expand.dots = FALSE)
   mf <- mf[c(1L, match(c("formula", "data", "subset", "na.action"), names(mf), 0L))]
@@ -72,6 +102,7 @@ buildAutoWekaClassifier <- function(formula, data, subset, na.action, seed = 123
   runOptions <- c(runOptions, "-timeLimit", timeLimit)
   runOptions <- c(runOptions, "-memLimit", memoryLimit)
   runOptions <- c(runOptions, "-nBestConfigs", numberOfConfigs)
+  metric <- match.arg(metric)
   runOptions <- c(runOptions, "-metric", metric)
   runOptions <- c(runOptions, "-parallelRuns", parallelRuns)
   if(outputDebugInfo)
@@ -174,7 +205,7 @@ distributionForInstances <- function(object, instances) {
 #' Print
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
-#' @rdname buildAutoWekaClassifier
+#' @rdname autoWekaClassifier
 #'
 #' @export
 print.RAutoWEKAClassifier <- function(x, ...) {
@@ -184,7 +215,7 @@ print.RAutoWEKAClassifier <- function(x, ...) {
 
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
-#' @rdname buildAutoWekaClassifier
+#' @rdname autoWekaClassifier
 #'
 #' @export
 summary.RAutoWEKAClassifier <- function(object, ...) {
@@ -194,7 +225,14 @@ summary.RAutoWEKAClassifier <- function(object, ...) {
 
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
-#' @rdname buildAutoWekaClassifier
+#' @param newdata the data to classify.
+#' @param type the prediction type to output (defaults to \code{class}). Available types:
+#' \describe{
+#'   \item{\code{class}}{to get class memberships}
+#'   \item{\code{probability}}{to get class membership probabilities}
+#' }
+#'
+#' @rdname autoWekaClassifier
 #'
 #' @export
 predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "probability"), ...) {
@@ -224,7 +262,7 @@ predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "prob
 
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
-#' @rdname buildAutoWekaClassifier
+#' @rdname autoWekaClassifier
 #'
 #' @export
 model.frame.RAutoWEKAClassifier <- function(formula, ...) {
@@ -233,7 +271,7 @@ model.frame.RAutoWEKAClassifier <- function(formula, ...) {
 
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
-#' @rdname buildAutoWekaClassifier
+#' @rdname autoWekaClassifier
 #'
 #' @export
 terms.frame.RAutoWEKAClassifier <- function(x, ...) {

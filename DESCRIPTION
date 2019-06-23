@@ -8,15 +8,19 @@ Authors@R:
            email = "jonathan.neugebauer@uni-muenster.de")
 Description: An R interface to Auto-WEKA (Version 2.6.1).
    Many different machine learning algorithms exist that can easily be used off the shelf,
-   many of these methods are implemented in the open source WEKA package (see
-   <http://www.cs.waikato.ac.nz/ml/weka/>).
+   many of these methods are implemented in the open source WEKA package
+   (see <http://www.cs.waikato.ac.nz/ml/weka/>).
    However, each of these algorithms have their own hyperparameters that can drastically
-   change their performance, and there are a staggeringly large number of possible alternatives overall.
-   Auto-WEKA considers the problem of simultaneously selecting a learning algorithm and setting its
-   hyperparameters, going beyond previous methods that address these issues in isolation.
-   Auto-WEKA does this using a fully automated approach, leveraging recent innovations in Bayesian optimization. 
+   change their performance, and there are a staggeringly large number of possible
+   alternatives overall.
+   Auto-WEKA considers the problem of simultaneously selecting a learning algorithm and
+   setting its hyperparameters, going beyond previous methods that address these issues
+   in isolation.
+   Auto-WEKA does this using a fully automated approach, leveraging recent innovations
+   in Bayesian optimization.
    For more information on Auto-WEKA see <https://www.cs.ubc.ca/labs/beta/Projects/autoweka/>.
-   This implementation partially adopted concepts used in the RWeka package (see <https://cran.r-project.org/package=RWeka>).
+   This implementation partially adopted concepts used in the RWeka package
+   (see <https://cran.r-project.org/package=RWeka>).
 Depends: R (>= 2.6.0)
 Imports: rJava (>= 0.6-3)
 SystemRequirements: Java (>= 8)

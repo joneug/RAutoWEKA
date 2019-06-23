@@ -191,8 +191,8 @@ public class RAutoWEKAClassifier extends AutoWEKAClassifier {
      * Authors: Kurt Hornik [aut, cre], Christian Buchta [ctb], Torsten Hothorn [ctb], Alexandros Karatzoglou [ctb], David Meyer [ctb], Achim Zeileis [ctb]
      * Link: https://cran.r-project.org/package=RWeka
      *
-     * @param i The instances to be classified.
-     * @return The predicted class probability distributions.
+     * @param instances The instances to be classified.
+     * @return The predicted class probability distributions in row-major format.
      * @throws Exception If the instances could not be classified successfully.
      */
     public double[] distributionForInstances(Instances instances) throws Exception {
