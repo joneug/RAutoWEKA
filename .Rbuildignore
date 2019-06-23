@@ -5,3 +5,4 @@
 ^NEWS\.md$          # A news file written in Markdown
 ^\.travis\.yml$     # Used for continuous integration testing with travis
 ^java$              # Java Source Files
+^\.travis\.yml$     # Travis CI

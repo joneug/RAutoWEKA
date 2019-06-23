@@ -1,5 +1,5 @@
 context("test-classifier")
 
-testthat::test_that("buildAutoWekaClassifier works", {
-  buildAutoWekaClassifier(iris, timeLimit = 1)
+testthat::test_that("autoWekaClassifier works", {
+  autoWekaClassifier(Species ~ ., iris, timeLimit = 1)
 })
