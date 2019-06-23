@@ -230,3 +230,12 @@ predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "prob
 model.frame.RAutoWEKAClassifier <- function(formula, ...) {
   return(formula$mf)
 }
+
+#' S3 method for class 'RAutoWEKAClassifier'
+#'
+#' @rdname buildAutoWekaClassifier
+#'
+#' @export
+terms.frame.RAutoWEKAClassifier <- function(x, ...) {
+  return(x$terms)
+}

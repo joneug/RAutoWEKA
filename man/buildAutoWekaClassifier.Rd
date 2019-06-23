@@ -6,6 +6,7 @@
 \alias{summary.RAutoWEKAClassifier}
 \alias{predict.RAutoWEKAClassifier}
 \alias{model.frame.RAutoWEKAClassifier}
+\alias{terms.frame.RAutoWEKAClassifier}
 \title{Build Auto-WEKA classifier}
 \usage{
 buildAutoWekaClassifier(formula, data, subset, na.action, seed = 123,
@@ -21,6 +22,8 @@ buildAutoWekaClassifier(formula, data, subset, na.action, seed = 123,
   "probability"), ...)
 
 \method{model.frame}{RAutoWEKAClassifier}(formula, ...)
+
+\method{terms}{frame.RAutoWEKAClassifier}(x, ...)
 }
 \arguments{
 \item{formula}{a model formua.}
