@@ -182,18 +182,16 @@ print.RAutoWEKAClassifier <- function(x, ...) {
     invisible(x)
 }
 
-#' Summary
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
 #' @rdname buildAutoWekaClassifier
 #'
 #' @export
-summary.RAutoWEKAClassifier <- function(x, ...) {
-  writeLines(rJava::.jcall(x$awc, "S", "toString"))
-  invisible(x)
+summary.RAutoWEKAClassifier <- function(object, ...) {
+  writeLines(rJava::.jcall(object$awc, "S", "toString"))
+  invisible(object)
 }
 
-#' Predict
 #' S3 method for class 'RAutoWEKAClassifier'
 #'
 #' @rdname buildAutoWekaClassifier
@@ -222,4 +220,13 @@ predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "prob
   }
 
   return(prediction)
+}
+
+#' S3 method for class 'RAutoWEKAClassifier'
+#'
+#' @rdname buildAutoWekaClassifier
+#'
+#' @export
+model.frame.RAutoWEKAClassifier <- function(formula, ...) {
+  return(formula$mf)
 }
