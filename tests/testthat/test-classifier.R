@@ -2,7 +2,6 @@ context("test-classifier")
 
 testthat::test_that("RAutWEKA classifier works", {
   data(iris)
-  require("mlbench")
   data("HouseVotes84", package = "mlbench")
   # # # # # # # # # # # # #
   # Test autoWekaClassifier
