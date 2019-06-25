@@ -6,7 +6,7 @@
 \alias{summary.RAutoWEKAClassifier}
 \alias{predict.RAutoWEKAClassifier}
 \alias{model.frame.RAutoWEKAClassifier}
-\alias{terms.frame.RAutoWEKAClassifier}
+\alias{terms.RAutoWEKAClassifier}
 \title{Auto-WEKA Classifier}
 \usage{
 autoWekaClassifier(formula, data, subset, na.action, seed = 123,
@@ -21,8 +21,7 @@ autoWekaClassifier(formula, data, subset, na.action, seed = 123,
   "weightedFalsePositiveRate", "weightedFMeasure", "weightedPrecision",
   "weightedRecall",      "weightedTrueNegativeRate",
   "weightedTruePositiveRate"), parallelRuns = 1,
-  outputDebugInfo = FALSE, noCapabiltiesCheck = FALSE,
-  decimalPlaces = 2, batchSize = 100)
+  outputDebugInfo = FALSE)
 
 \method{print}{RAutoWEKAClassifier}(x, ...)
 
@@ -33,7 +32,7 @@ autoWekaClassifier(formula, data, subset, na.action, seed = 123,
 
 \method{model.frame}{RAutoWEKAClassifier}(formula, ...)
 
-\method{terms}{frame.RAutoWEKAClassifier}(x, ...)
+\method{terms}{RAutoWEKAClassifier}(x, ...)
 }
 \arguments{
 \item{formula}{a model formua.}
@@ -70,21 +69,7 @@ Original parameter name: \code{-metric}.}
 
 Original parameter name: \code{-parallelRuns}.}
 
-\item{outputDebugInfo}{logical indicating to run the classifier in debug mode which may output additional information (defaults to \code{FALSE}).
-
-Original parameter name: \code{-output-debug-info}.}
-
-\item{noCapabiltiesCheck}{logical indicating to not check the classifier capabilities before the classifier is built (defaults to \code{FALSE}). Use with caution.
-
-Original parameter name: \code{-do-not-check-capabilities}.}
-
-\item{decimalPlaces}{the number of decimal places for the output of numbers in the model (defaults to 2).
-
-Original parameter name: \code{-num-decimal-places}.}
-
-\item{batchSize}{the desired batch size for batch prediction (defaults to 100).
-
-Original parameter name: \code{-batch-size}.}
+\item{outputDebugInfo}{logical indicating to run the classifier in debug mode which may output additional information (defaults to \code{FALSE}).}
 
 \item{newdata}{the data to classify.}
 
@@ -118,8 +103,8 @@ require("mlbench")
 data("HouseVotes84", package = "mlbench")
 # Build classifier with changed metric
 classifier <- autoWekaClassifier(Class ~ ., HouseVotes84, metric = "precision")
-predict(model, HouseVotes84[1:10, -1])
-predict(model, HouseVotes84[1:10, -1], type = "probability")
+predict(classifier, HouseVotes84[1:10, -1])
+predict(classifier, HouseVotes84[1:10, -1], type = "probability")
 }
 }
 \references{

@@ -32,17 +32,6 @@
 #' Original parameter name: \code{-parallelRuns}.
 #' @param outputDebugInfo logical indicating to run the classifier in debug mode which may output additional information (defaults to \code{FALSE}).
 #'
-#' Original parameter name: \code{-output-debug-info}.
-#' @param noCapabiltiesCheck logical indicating to not check the classifier capabilities before the classifier is built (defaults to \code{FALSE}). Use with caution.
-#'
-#' Original parameter name: \code{-do-not-check-capabilities}.
-#' @param decimalPlaces the number of decimal places for the output of numbers in the model (defaults to 2).
-#'
-#' Original parameter name: \code{-num-decimal-places}.
-#' @param batchSize the desired batch size for batch prediction (defaults to 100).
-#'
-#' Original parameter name: \code{-batch-size}.
-#'
 #' @return The Auto-WEKA classifier built.
 #'
 #' @author Implementation partially based on \code{\link[RWeka]{make_Weka_classifier}}.
@@ -72,8 +61,8 @@
 #' data("HouseVotes84", package = "mlbench")
 #' # Build classifier with changed metric
 #' classifier <- autoWekaClassifier(Class ~ ., HouseVotes84, metric = "precision")
-#' predict(model, HouseVotes84[1:10, -1])
-#' predict(model, HouseVotes84[1:10, -1], type = "probability")
+#' predict(classifier, HouseVotes84[1:10, -1])
+#' predict(classifier, HouseVotes84[1:10, -1], type = "probability")
 #' }
 #' @export
 autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, timeLimit = 15, memoryLimit = 1024, numberOfConfigs = 1,
@@ -83,7 +72,10 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
                                           "precision", "relativeAbsoluteError", "rootMeanSquaredError", "rootRelativeSquaredError",
                                           "weightedAreaUnderROC", "weightedFalseNegativeRate", "weightedFalsePositiveRate", "weightedFMeasure",
                                           "weightedPrecision", "weightedRecall", "weightedTrueNegativeRate", "weightedTruePositiveRate"),
-                                    parallelRuns = 1, outputDebugInfo = FALSE, noCapabiltiesCheck = FALSE, decimalPlaces = 2, batchSize = 100) {
+                                    parallelRuns = 1, outputDebugInfo = FALSE) {
+  # Create result list
+  result <- list()
+
   # Create model frame from call (see e.g. stats:lm)
   cl <- match.call()
   mf <- match.call(expand.dots = FALSE)
@@ -93,8 +85,17 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
 
-  # Map data to WEKA instances
-  instances = read_model_frame_into_Weka(mf)
+  # Levels
+  result[["levels"]] <- levels(mf[[1L]])
+  # Call
+  result[["call"]] <- cl
+  # Model frame
+  result[["mf"]] <- mf
+  result[["terms"]] <- mt
+
+  # Map to WEKA instances
+  instances = mapToInstances(mf)
+  result[["instances"]] <- instances
 
   # Map function parameters to character vector
   runOptions <- vector()
@@ -107,10 +108,6 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
   runOptions <- c(runOptions, "-parallelRuns", parallelRuns)
   if(outputDebugInfo)
     runOptions <- c(runOptions, "-output-debug-info")
-  if(noCapabiltiesCheck)
-    runOptions <- c(runOptions, "-do-not-check-capabilities")
-  runOptions <- c(runOptions, "-num-decimal-places", decimalPlaces)
-  runOptions <- c(runOptions, "-batch-size", batchSize)
 
   # Start redirecting Java Standard Error Output
   exitFunction <- startRedirectingJavaStdErrOutput()
@@ -123,8 +120,6 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
   # Stop redirecting Java Standard Error Output and output errors if outputDebugInfo = T
   stopRedirectingJavaStdErrOut(exitFunction,outputDebugInfo)
 
-  # Create result list
-  result <- list()
   # Auto WEKA Classifier object
   result[["awc"]] <- autoWEKAClassifier
   # Capabilities
@@ -148,23 +143,14 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
     rJava::.jcheck(silent = TRUE) # Clear exception
   }
   result[["rrse"]] <- rJava::.jcall(evaluation, "D", "rootRelativeSquaredError")
-  # Instances
-  result[["instances"]] <- instances
   # Number of instances
   result[["numInstances"]] <- rJava::.jcall(evaluation, "D", "numInstances")
-  # Levels
-  result[["levels"]] <- levels(mf[[1L]])
-  # Call
-  result[["call"]] <- cl
-  # Model frame
-  result[["mf"]] <- mf
-  result[["terms"]] <- mt
   # Predictions
   result[["classPredicitions"]] <- classifyInstances(result, instances)
   result[["probabilityPredictions"]] <- distributionForInstances(result, instances)
 
   # Set class of result list
-  structure(result, class = "RAutoWEKAClassifier")
+  return(structure(result, class = "RAutoWEKAClassifier"))
 }
 
 #' Calculates the class membership for given test instances.
@@ -249,7 +235,7 @@ predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "prob
   mf <- model.frame(delete.response(terms(object)), newdata, na.action = object$call$na.action)
   classes <- factor(NA, levels = object$levels)
   mf <- cbind(CLASS = classes, mf)
-  instances <- read_model_frame_into_Weka(mf)
+  instances <- mapToInstances(mf)
 
   if(type == "class") {
     prediction <- classifyInstances(object, instances)
@@ -274,6 +260,6 @@ model.frame.RAutoWEKAClassifier <- function(formula, ...) {
 #' @rdname autoWekaClassifier
 #'
 #' @export
-terms.frame.RAutoWEKAClassifier <- function(x, ...) {
+terms.RAutoWEKAClassifier <- function(x, ...) {
   return(x$terms)
 }

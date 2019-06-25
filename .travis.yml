@@ -5,6 +5,7 @@ apt_packages:
 
 before_install:
   - R CMD javareconf
+  - R -e 'install.packages(c("testthat"))'
 
 before_script:
   - cd java
@@ -12,6 +13,5 @@ before_script:
   - cd ..
 
 script:
-  - R -e 'install.packages(c("testthat"))'
   - R CMD build . --no-build-vignettes --no-manual
   - R CMD check *tar.gz --no-build-vignettes --no-manual
