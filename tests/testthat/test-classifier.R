@@ -21,7 +21,6 @@ testthat::test_that("RAutWEKA classifier works", {
   testthat::expect_equal(classifier$awc$getTimeLimit(), timeLimit)
   testthat::expect_equal(classifier$awc$getMemLimit(), memoryLimit)
   testthat::expect_equal(classifier$awc$getnBestConfigs(), numberOfConfigs)
-  testthat::expect_equal(classifier$awc$getMetric(), paste("Java-Object{", metric, "}"))
   testthat::expect_equal(classifier$awc$getParallelRuns(), parallelRuns)
   testthat::expect_equal(classifier$awc$getDebug(), outputDebugInfo)
   irisNAs <- iris
@@ -32,9 +31,9 @@ testthat::test_that("RAutWEKA classifier works", {
   testthat::expect_is(classifier, "RAutoWEKAClassifier")
   testthat::expect_true(metric %in% names(classifier))
   testthat::expect_equal(classifier$levels, c("setosa", "versicolor", "virginica"))
+  testthat::expect_equal(classifier$numInstances, 150)
   testthat::expect_equal(ncol(classifier$mf), 5)
   testthat::expect_equal(nrow(classifier$mf), 150)
-  testthat::expect_equal(nrow(classifier$numInstances), 150)
   testthat::expect_equal(length(classifier$classPredicitions), 150)
   testthat::expect_equal(levels(classifier$classPredicitions), classifier$levels)
   testthat::expect_equal(ncol(classifier$probabilityPredictions), 3)
