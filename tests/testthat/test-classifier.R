@@ -6,9 +6,6 @@ testthat::test_that("RAutWEKA classifier works", {
   # Test autoWekaClassifier
   # # # # # # # # # # # # #
   formula = Species ~ .
-  data = iris
-  subset = NULL
-  naAction = na.omit
   seed = 42
   timeLimit = 1
   memoryLimit = 1025
@@ -17,7 +14,7 @@ testthat::test_that("RAutWEKA classifier works", {
   parallelRuns = 2
   outputDebugInfo = TRUE
 
-  classifier <- autoWekaClassifier(formula, data, subset, naAction, seed, timeLimit, memoryLimit, numberOfConfigs, metric, parallelRuns, outputDebugInfo)
+  classifier <- autoWekaClassifier(formula, iris, NULL, na.omit, seed, timeLimit, memoryLimit, numberOfConfigs, metric, parallelRuns, outputDebugInfo)
 
   # Test parameters
   testthat::expect_equal(classifier$awc$getSeed(), seed)
