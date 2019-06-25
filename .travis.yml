@@ -5,6 +5,7 @@ apt_packages:
 
 before_install:
   - R CMD javareconf
+  - R -e 'install.packages(c("testthat"))'
 
 before_script:
   - cd java

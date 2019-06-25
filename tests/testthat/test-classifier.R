@@ -2,7 +2,6 @@ context("test-classifier")
 
 testthat::test_that("RAutWEKA classifier works", {
   data(iris)
-  data("HouseVotes84", package = "mlbench")
   # # # # # # # # # # # # #
   # Test autoWekaClassifier
   # # # # # # # # # # # # #
@@ -28,7 +27,9 @@ testthat::test_that("RAutWEKA classifier works", {
   testthat::expect_equal(classifier$awc$getMetric(), paste("Java-Object{", metric, "}"))
   testthat::expect_equal(classifier$awc$getParallelRuns(), parallelRuns)
   testthat::expect_equal(classifier$awc$getDebug(), outputDebugInfo)
-  testthat::expect_that(autoWekaClassifier(Class ~ ., HouseVotes84, na.action = na.fail), testthat::throws_error("missing values in object"))
+  irisNAs <- iris
+  irisNAs[nrow(irisNAs) + 1,] = list(Sepal.Length = NA, Sepal.Width = 1.0, Petal.Length = NA, Petal.Width = 3.0, Species = "setosa")
+  testthat::expect_that(autoWekaClassifier(formula, irisNAs, na.action = na.fail), testthat::throws_error("missing values in object"))
 
   # Test classifier
   testthat::expect_is(classifier, "RAutoWEKAClassifier")
