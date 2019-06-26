@@ -42,6 +42,10 @@ testthat::test_that("RAutWEKA classifier works", {
   testthat::expect_equal(classifier$classPredicitions, predict(classifier, type = "class"))
   testthat::expect_equal(classifier$probabilityPredictions, predict(classifier, type = "probability"))
 
+  # Test regression
+  classifier <- autoWekaClassifier(Sepal.Width ~ Petal.Width, iris, timeLimit = timeLimit)
+  testthat::expect_equal(sum(predict(classifier, list(Petal.Width = c(0.2,0.3)), type = "class")), sum(predict(classifier, list(Petal.Width = c(0.2,0.3)), type = "probability")))
+
   # # # # # # # # # # # # #
   # Test predict
   # # # # # # # # # # # # #

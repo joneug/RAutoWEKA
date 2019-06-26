@@ -80,10 +80,26 @@ Original parameter name: \code{-parallelRuns}.}
 }}
 }
 \value{
-The Auto-WEKA classifier built.
+The Auto-WEKA classifier built. The result is represented as a list of the following elements (if applicable):
+\describe{
+  \item{\code{call}}{the call that has been made on the function.}
+  \item{\code{mf}}{the model frame.}
+  \item{\code{terms}}{the terms of the given forumula.}
+  \item{\code{instances}}{a S4 object holding the input data as WEKA instances.}
+  \item{\code{awc}}{a S4 object representing the classifier built.}
+  \item{\code{cor}}{the correlation coefficient.}
+  \item{\code{mae}}{the mean absolute error.}
+  \item{\code{rmse}}{the root mean square error.}
+  \item{\code{rae}}{the relative absolute error.}
+  \item{\code{rrse}}{the root relative rquared Error.}
+  \item{\code{numInstances}}{the number of instances.}
+  \item{\code{classPredicitions}}{the class memberships for the given test instances.}
+  \item{\code{probabilityPredictions}}{the class membership probabilities for given test instances.}
+}
+In addition, the chosen metric is contained in the result list as well.
 }
 \description{
-This functions builds an Auto-WEKA classifier.
+This functions builds an Auto-WEKA classifier. Note that Auto-WEKA also supports regression algorithms, although the function name would not suggest that. It has been chosen to stick to Auto-WEKA's naming as it is in line with WEKA's terminology (which also only uses the term classifier due to historic reasons).
 }
 \examples{
 \dontrun{
@@ -113,7 +129,9 @@ C. Thornton, F. Hutter, H. H. Hoos, and K. Leyton-Brown (2013). Auto-WEKA: Combi
 F. Hutter, L. Kotthoff, and J. Vanschoren (2019). Automatic Machine Learning: Methods, Systems, Challenges.
 
 K. Hornik, C. Buchta, and A. Zeileis (2009). Open-source machine learning: R meets Weka. \emph{Computational Statistics}, \bold{24}/2, 225--232.
+
+Eibe Frank, Mark A. Hall, and Ian H. Witten (2016). The WEKA Workbench. Online Appendix for "Data Mining: Practical Machine Learning Tools and Techniques", Morgan Kaufmann, Fourth Edition, 2016.
 }
 \author{
-Implementation partially based on \code{\link[RWeka]{make_Weka_classifier}}.
+Implementation partially based on the function \code{\link[RWeka]{make_Weka_classifier}} contained in the \href{https://cran.r-project.org/package=RWeka}{RWeka} package.
 }

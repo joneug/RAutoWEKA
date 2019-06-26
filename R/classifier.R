@@ -1,6 +1,6 @@
 #' Auto-WEKA Classifier
 #'
-#' This functions builds an Auto-WEKA classifier.
+#' This functions builds an Auto-WEKA classifier. Note that Auto-WEKA also supports regression algorithms, although the function name would not suggest that. It has been chosen to stick to Auto-WEKA's naming as it is in line with WEKA's terminology (which also only uses the term classifier due to historic reasons).
 #'
 #' @param formula a model formua.
 #'
@@ -32,9 +32,25 @@
 #' Original parameter name: \code{-parallelRuns}.
 #' @param outputDebugInfo logical indicating to run the classifier in debug mode which may output additional information (defaults to \code{FALSE}).
 #'
-#' @return The Auto-WEKA classifier built.
+#' @return The Auto-WEKA classifier built. The result is represented as a list of the following elements (if applicable):
+#' \describe{
+#'   \item{\code{call}}{the call that has been made on the function.}
+#'   \item{\code{mf}}{the model frame.}
+#'   \item{\code{terms}}{the terms of the given forumula.}
+#'   \item{\code{instances}}{a S4 object holding the input data as WEKA instances.}
+#'   \item{\code{awc}}{a S4 object representing the classifier built.}
+#'   \item{\code{cor}}{the correlation coefficient.}
+#'   \item{\code{mae}}{the mean absolute error.}
+#'   \item{\code{rmse}}{the root mean square error.}
+#'   \item{\code{rae}}{the relative absolute error.}
+#'   \item{\code{rrse}}{the root relative rquared Error.}
+#'   \item{\code{numInstances}}{the number of instances.}
+#'   \item{\code{classPredicitions}}{the class memberships for the given test instances.}
+#'   \item{\code{probabilityPredictions}}{the class membership probabilities for given test instances.}
+#' }
+#' In addition, the chosen metric is contained in the result list as well.
 #'
-#' @author Implementation partially based on \code{\link[RWeka]{make_Weka_classifier}}.
+#' @author Implementation partially based on the function \code{\link[RWeka]{make_Weka_classifier}} contained in the \href{https://cran.r-project.org/package=RWeka}{RWeka} package.
 #'
 #' @references
 #' C. Thornton, F. Hutter, H. H. Hoos, and K. Leyton-Brown (2013). Auto-WEKA: Combined selection and hyperparameter optimization of classification algorithms. In \emph{Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining} (pp. 847-855). ACM.
@@ -42,6 +58,8 @@
 #' F. Hutter, L. Kotthoff, and J. Vanschoren (2019). Automatic Machine Learning: Methods, Systems, Challenges.
 #'
 #' K. Hornik, C. Buchta, and A. Zeileis (2009). Open-source machine learning: R meets Weka. \emph{Computational Statistics}, \bold{24}/2, 225--232.
+#'
+#' Eibe Frank, Mark A. Hall, and Ian H. Witten (2016). The WEKA Workbench. Online Appendix for "Data Mining: Practical Machine Learning Tools and Techniques", Morgan Kaufmann, Fourth Edition, 2016.
 #'
 #' @examples
 #' \dontrun{
@@ -122,8 +140,6 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
 
   # Auto WEKA Classifier object
   result[["awc"]] <- autoWEKAClassifier
-  # Capabilities
-  result[["capabilities"]] <- rJava::.jcall(rJava::.jcall(autoWEKAClassifier, "Lweka/core/Capabilities;", "getCapabilities"), "S", "toString")
   # Value for metric to optimize
   result[[metric]] <- rJava::.jcall(autoWEKAClassifier, "D", "measureEstimatedMetricValue")
   # Error metrics
@@ -146,14 +162,15 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
   # Number of instances
   result[["numInstances"]] <- rJava::.jcall(evaluation, "D", "numInstances")
   # Predictions
-  result[["classPredicitions"]] <- classifyInstances(result, instances)
+  if(!is.null(result$levels))
+    result[["classPredicitions"]] <- classifyInstances(result, instances)
   result[["probabilityPredictions"]] <- distributionForInstances(result, instances)
 
   # Set class of result list
   return(structure(result, class = "RAutoWEKAClassifier"))
 }
 
-#' Calculates the class membership for given test instances.
+#' Calculates the class memberships for given test instances.
 #'
 #' @param object the classifier object.
 #' @param instances the instances to classify.
@@ -162,9 +179,11 @@ autoWekaClassifier <- function(formula, data, subset, na.action, seed = 123, tim
 #'
 #' @noRd
 classifyInstances <- function(object, instances) {
+  # Implementation adapted from the RWeka package (https://cran.r-project.org/package=RWeka)
   prediction <- rJava::.jcall(object$awc, "[D", "classifyInstances", instances)
   is.na(prediction) <- is.nan(prediction)
-  prediction <- factor(object$levels[prediction + 1L], levels = object$levels)
+  if(!is.null(object$levels))
+    prediction <- factor(object$levels[prediction + 1L], levels = object$levels)
 
   return(prediction)
 }
@@ -178,6 +197,7 @@ classifyInstances <- function(object, instances) {
 #'
 #' @noRd
 distributionForInstances <- function(object, instances) {
+  # Implementation adapted from the RWeka package (https://cran.r-project.org/package=RWeka)
   numInstances = rJava::.jcall(instances, "I", "numInstances")
   prediction <- rJava::.jcall(object$awc, "[D", "distributionForInstances", instances)
   # Reshape vector to matrix
@@ -222,6 +242,7 @@ summary.RAutoWEKAClassifier <- function(object, ...) {
 #'
 #' @export
 predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "probability"), ...) {
+  # Implementation adapted from the RWeka package (https://cran.r-project.org/package=RWeka)
   type <- match.arg(type)
 
   if (missing(newdata) || is.null(newdata)) {
@@ -233,7 +254,12 @@ predict.RAutoWEKAClassifier <- function(object, newdata, type = c("class", "prob
   }
 
   mf <- model.frame(delete.response(terms(object)), newdata, na.action = object$call$na.action)
-  classes <- factor(NA, levels = object$levels)
+  classes <- NULL
+  if(!is.null(object$levels)) {
+    classes <- factor(NA, levels = object$levels)
+  } else {
+    classes <- NA_real_
+  }
   mf <- cbind(CLASS = classes, mf)
   instances <- mapToInstances(mf)
 

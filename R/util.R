@@ -38,10 +38,9 @@ stopRedirectingJavaStdErrOut <- function(exitFunction, print = FALSE) {
 #' @param mf the model frame.
 #' @return a WEKA \code{Instances} object.
 #'
-#' @author Implementation adapted from the \href{https://cran.r-project.org/package=RWeka}{RWeka} package.
-#'
 #' @noRd
 mapToInstances <- function(mf) {
+  # Implementation adapted from the RWeka package (https://cran.r-project.org/package=RWeka)
   attributeNames <- names(mf)
   attributeInfos <- rJava::.jnew("java/util/ArrayList", as.integer(length(mf)))
 
