@@ -1,11 +1,17 @@
 language: r
 
+r:
+  - oldrel
+  - release
+  - devel
+
 apt_packages:
   - openjdk-8-jdk
 
-before_install:
+install:
   - R CMD javareconf
   - R -e 'install.packages(c("testthat"))'
+  - R -e 'devtools::install_deps(dep = T)'
 
 before_script:
   - cd java
@@ -13,5 +19,5 @@ before_script:
   - cd ..
 
 script:
-  - R CMD build . --no-build-vignettes --no-manual
-  - R CMD check *tar.gz --no-build-vignettes --no-manual
+  - R CMD build .
+  - R CMD check *tar.gz
