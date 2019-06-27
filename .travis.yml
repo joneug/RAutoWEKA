@@ -11,6 +11,8 @@ apt_packages:
 install:
   - R CMD javareconf
   - R -e 'install.packages(c("testthat"))'
+  - R -e 'install.packages(c("devtools"))'
+  - R -e 'devtools::install_deps(dep = T)'
 
 before_script:
   - cd java
