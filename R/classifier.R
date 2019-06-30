@@ -1,6 +1,6 @@
 #' Auto-WEKA Classifier
 #'
-#' This functions builds an Auto-WEKA classifier. Note that Auto-WEKA also supports regression algorithms, although the function name would not suggest that. It has been chosen to stick to Auto-WEKA's naming as it is in line with WEKA's terminology (which also only uses the term classifier due to historic reasons).
+#' This functions builds an Auto-WEKA classifier. Note that Auto-WEKA also supports regression algorithms, although the function name would not suggest that. It has been decided to stick to Auto-WEKA's naming as it is in line with WEKA's terminology (which also only uses the term classifier due to historic reasons).
 #'
 #' @param formula a model formua.
 #'
