@@ -36,6 +36,10 @@ public abstract class Util {
 
     /**
      * Parses dates given as string array to a double array.
+     * <p>
+     * Adapted from RWeka (0.4-40)
+     * Authors: Kurt Hornik [aut, cre], Christian Buchta [ctb], Torsten Hothorn [ctb], Alexandros Karatzoglou [ctb], David Meyer [ctb], Achim Zeileis [ctb]
+     * Link: https://cran.r-project.org/package=RWeka
      *
      * @param attribute   A reference attribute.
      * @param data        The data to parse.
