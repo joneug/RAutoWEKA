@@ -35,7 +35,7 @@ autoWekaClassifier(formula, data, subset, na.action, seed = 123,
 \method{terms}{RAutoWEKAClassifier}(x, ...)
 }
 \arguments{
-\item{formula}{a model formua.}
+\item{formula}{a model formula.}
 
 \item{data}{the data to build the classifier on.}
 
